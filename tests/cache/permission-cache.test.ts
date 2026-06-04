@@ -70,6 +70,17 @@ describe('PolicyCache', () => {
     expect(cache.get('delete', 'post')).toBeUndefined();
   });
 
+  it('invalidate() removes only the specified action+resource entry', () => {
+    const cache = new PolicyCache();
+    cache.set('create', 'post', [samplePolicy]);
+    cache.set('delete', 'post', [samplePolicy]);
+
+    cache.invalidate('create', 'post');
+
+    expect(cache.get('create', 'post')).toBeUndefined();
+    expect(cache.get('delete', 'post')).toEqual([samplePolicy]);
+  });
+
   it('clear() removes all cached policies', () => {
     const cache = new PolicyCache();
     cache.set('create', 'post', [samplePolicy]);

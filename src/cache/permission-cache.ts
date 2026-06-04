@@ -49,6 +49,10 @@ export class PolicyCache {
     this.inner.set(`${action}:${resourceType}`, policies);
   }
 
+  invalidate(action: string, resourceType: string): void {
+    this.inner.delete(`${action}:${resourceType}`);
+  }
+
   clear(): void {
     this.inner.clear();
   }
