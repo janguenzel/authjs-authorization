@@ -1,0 +1,20 @@
+# Source (dist/ is published; src/ is not needed by consumers)
+src/
+tests/
+examples/
+
+# GitHub / CI
+.github/
+
+# Build config (not needed at runtime)
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+
+# Dev artifacts
+coverage/
+*.log
+
+# Editor
+.vscode/
+.idea/
