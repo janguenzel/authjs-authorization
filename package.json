@@ -1,6 +1,6 @@
 {
   "name": "@janguenzel/authjs-authorization",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Flexible RBAC + ABAC authorization layer for Auth.js (NextAuth v5)",
   "type": "module",
   "exports": {
