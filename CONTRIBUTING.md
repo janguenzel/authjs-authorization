@@ -62,6 +62,46 @@ examples/        Usage examples (not part of the published package)
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
 | `npm run clean` | Delete the `dist/` folder |
+| `npm run release` | Cut a release on `main` (see below) |
+
+## Feature Branch Workflow
+
+All work happens on feature branches merged into `main`.
+
+```
+git checkout -b feat/your-feature main   # branch from main
+# ... commit with conventional messages: feat:, fix:, docs:, chore:
+# ... add entry under ## [Unreleased] in CHANGELOG.md
+git push -u origin feat/your-feature
+# open a PR → merge to main
+```
+
+Branches should be named `feat/`, `fix/`, `chore/`, or `docs/` followed by a short slug.
+
+## Release Process
+
+Releases are cut from `main` only, using `release-it`. Never tag or bump versions on a feature branch.
+
+```bash
+# 1. Ensure you're on main and fully up to date
+git checkout main && git pull origin main
+
+# 2. Promote [Unreleased] in CHANGELOG.md to the new version and today's date
+#    e.g.  ## [Unreleased]  →  ## [0.2.0] - 2026-06-04
+#    then stage it:
+git add CHANGELOG.md
+
+# 3. Run release-it with the bump type (major | minor | patch)
+npm run release -- minor
+#    release-it will:
+#      - bump version in package.json
+#      - commit both package.json and the staged CHANGELOG as "chore: release vX.Y.Z"
+#      - create a git tag vX.Y.Z
+#      - push the commit and tag to origin
+
+# 4. Publish to npm
+npm run build && npm publish
+```
 
 ## Contribution Rules
 
