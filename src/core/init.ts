@@ -27,10 +27,14 @@ export interface AuthzConfig {
   cache?: {
     /** Set false to disable caching (useful for testing). Default: true */
     enabled?: boolean;
-    /** Cache entry TTL in milliseconds. Default: 300_000 (5 min) */
+    /** Shared TTL fallback in milliseconds. Default: 300_000 (5 min) */
     ttlMs?: number;
-    /** Maximum entries per cache. Default: 1000 */
+    /** Shared max entries fallback per cache. Default: 1000 */
     maxSize?: number;
+    /** Per-cache overrides for the permission (RBAC) cache. Falls back to shared values. */
+    permissions?: { ttlMs?: number; maxSize?: number };
+    /** Per-cache overrides for the policy (ABAC) cache. Falls back to shared values. */
+    policies?: { ttlMs?: number; maxSize?: number };
   };
 }
 
@@ -85,16 +89,25 @@ export interface AuthzInstance {
  * export const { authorize, withAuthorization, can } = initAuthz({ db: prisma, auth });
  */
 export function initAuthz(config: AuthzConfig): AuthzInstance {
-  const cacheOptions: LRUCacheOptions =
-    config.cache?.enabled === false
-      ? { maxSize: 0, ttlMs: 0 }
-      : {
-          ttlMs: config.cache?.ttlMs ?? 300_000,
-          maxSize: config.cache?.maxSize ?? 1000,
-        };
+  const disabled = config.cache?.enabled === false;
+  const sharedTtl = config.cache?.ttlMs ?? 300_000;
+  const sharedMax = config.cache?.maxSize ?? 1000;
 
-  const permissionCache = new PermissionCache(cacheOptions);
-  const policyCache = new PolicyCache(cacheOptions);
+  const permissionOptions: LRUCacheOptions = disabled
+    ? { maxSize: 0, ttlMs: 0 }
+    : {
+        ttlMs: config.cache?.permissions?.ttlMs ?? sharedTtl,
+        maxSize: config.cache?.permissions?.maxSize ?? sharedMax,
+      };
+  const policyOptions: LRUCacheOptions = disabled
+    ? { maxSize: 0, ttlMs: 0 }
+    : {
+        ttlMs: config.cache?.policies?.ttlMs ?? sharedTtl,
+        maxSize: config.cache?.policies?.maxSize ?? sharedMax,
+      };
+
+  const permissionCache = new PermissionCache(permissionOptions);
+  const policyCache = new PolicyCache(policyOptions);
 
   const deps: AuthzDeps = {
     db: config.db,
