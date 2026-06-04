@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/janguenzel/authjs-authorization/compare/v0.2.0...v0.3.0) (2026-06-04)
+
+### Features
+
+* **init:** add per-cache TTL and maxSize configuration ([6282a45](https://github.com/janguenzel/authjs-authorization/commit/6282a456c1f419e1da7dc08bd9793b9f61a1c94a))
+
+### Bug Fixes
+
+* **cache:** add targeted PolicyCache.invalidate() method ([765a567](https://github.com/janguenzel/authjs-authorization/commit/765a567e9b89837b329001839cac508f3a070f90))
+
+### Performance Improvements
+
+* **adapter:** push ABAC policy filtering to the database query ([472b8dc](https://github.com/janguenzel/authjs-authorization/commit/472b8dc0bce158a6e360f63a27391cc876845fbf))
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
