@@ -50,18 +50,19 @@ export function createPrismaAdapter(prisma: PrismaClient): AuthzAdapter {
       action: string,
       resourceType: string,
     ): Promise<PolicyRecord[]> {
+      // "empty = all" semantics: an empty actions/resources array matches every action/resource.
+      // Prisma's isEmpty + hasSome operators handle this at the DB level since both fields are String[].
       const policies = await prisma.policy.findMany({
-        where: { enabled: true },
+        where: {
+          enabled: true,
+          AND: [
+            { OR: [{ actions: { isEmpty: true } }, { actions: { hasSome: [action] } }] },
+            { OR: [{ resources: { isEmpty: true } }, { resources: { hasSome: [resourceType] } }] },
+          ],
+        },
         orderBy: { priority: 'desc' },
       });
-
-      // DB-level pre-filter isn't straightforward for "empty = all" semantics,
-      // so we do a lightweight JS filter on the already-indexed result set.
-      return policies.filter(
-        (p) =>
-          (p.actions.length === 0 || p.actions.includes(action)) &&
-          (p.resources.length === 0 || p.resources.includes(resourceType)),
-      ) as PolicyRecord[];
+      return policies as PolicyRecord[];
     },
 
     async getUserRoleNames(userId: string): Promise<string[]> {
