@@ -1,0 +1,14 @@
+{
+  "git": {
+    "commitMessage": "chore: release v${version}",
+    "tagName": "v${version}",
+    "requireCleanWorkingDir": false,
+    "requireBranch": "main",
+    "commit": true,
+    "tag": true,
+    "push": true
+  },
+  "npm": {
+    "publish": false
+  }
+}
