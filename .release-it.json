@@ -1,6 +1,13 @@
 {
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog"
+    }
+  },
   "git": {
-    "commitMessage": "chore: release v${version}",
+    "commitMessage": "chore: release v${version} [skip ci]",
     "tagName": "v${version}",
     "requireCleanWorkingDir": false,
     "requireBranch": "main",

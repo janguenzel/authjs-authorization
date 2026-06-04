@@ -80,6 +80,7 @@
   },
   "devDependencies": {
     "@prisma/client": "^6.0.0",
+    "@release-it/conventional-changelog": "^11.0.1",
     "@types/json-logic-js": "^2.0.6",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^3.0.0",

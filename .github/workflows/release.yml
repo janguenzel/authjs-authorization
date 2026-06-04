@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     name: Publish to npm
@@ -14,11 +18,9 @@ jobs:
       contents: write  # required to create GitHub Releases
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 20.19.x
           registry-url: https://registry.npmjs.org
@@ -36,9 +38,6 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Dry-run publish
-        run: npm publish --dry-run --access public
-
       - name: Verify npm auth
         run: npm whoami
         env:
@@ -52,5 +51,4 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          body_path: CHANGELOG.md
           generate_release_notes: true
