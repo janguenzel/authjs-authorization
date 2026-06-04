@@ -3,7 +3,6 @@ import type { AuthzAdapter } from '../types/adapter.js';
 import type { ABACEvalContext } from '../types/abac.js';
 import type { PolicyCache } from '../cache/permission-cache.js';
 import { loadPolicies } from './loader.js';
-import { filterPolicies } from './matcher.js';
 
 /** Three-state result from ABAC evaluation. */
 export type ABACDecision = 'allow' | 'deny' | 'no-match';
@@ -24,7 +23,6 @@ export async function checkABAC(
 ): Promise<ABACDecision> {
   const { action, resource } = evalCtx;
   const policies = await loadPolicies(action, resource.type, db, cache);
-  const matched = filterPolicies(policies, action, resource.type);
 
   // Build the data object that JSON Logic rules can reference via "var"
   const data: Record<string, unknown> = {
@@ -34,7 +32,7 @@ export async function checkABAC(
     context: evalCtx.context ?? {},
   };
 
-  for (const policy of matched) {
+  for (const policy of policies) {
     let result: unknown;
     try {
       result = jsonLogic.apply(policy.conditions as Parameters<typeof jsonLogic.apply>[0], data);
