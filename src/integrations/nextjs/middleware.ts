@@ -11,8 +11,8 @@ export type GetSessionFn = (req: NextRequest) => Promise<Session | null>;
 
 export interface WithAuthorizationOptions {
   action: string;
-  /** Static resource type string, or a function that derives it from the request */
-  resource: string | ((req: NextRequest) => ResourceDescriptor);
+  /** Static resource type string, or a function that derives it from the request (sync or async) */
+  resource: string | ((req: NextRequest) => ResourceDescriptor | Promise<ResourceDescriptor>);
   abacMode?: ABACMode;
   /** Called when the user is not authenticated (no session). Defaults to 401 JSON response */
   onUnauthenticated?: (req: NextRequest) => NextResponseType;
@@ -48,7 +48,7 @@ export function createWithAuthorization(deps: AuthzDeps, getSession: GetSessionF
       }
 
       const resource =
-        typeof options.resource === 'function' ? options.resource(req) : options.resource;
+        typeof options.resource === 'function' ? await options.resource(req) : options.resource;
 
       const reqContext: RequestContext = {
         timestamp: Date.now(),
